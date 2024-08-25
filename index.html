@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
             padding: 20px;
             background-color: #f9f9f9;
         }
@@ -16,6 +16,7 @@
         h1 {
             color: #333;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .container {
@@ -29,18 +30,22 @@
 
         input,
         button {
-            width: calc(100% - 22px); /* Adjusted width to fit within margins */
+            width: 100%;
             padding: 10px;
-            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* Ensure padding does not affect width */
+            box-sizing: border-box;
+            margin: 5px 0;
+        }
+
+        input#custom-url {
+            margin-top: 10px;
         }
 
         #generated-url {
             font-weight: bold;
             color: #5cb85c;
-            margin-top: 10px;
+            margin: 10px 0;
             word-wrap: break-word;
         }
 
@@ -68,8 +73,10 @@
             color: white;
         }
 
-        .full-width {
-            width: calc(100% - 22px);
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin: 10px 0;
         }
 
@@ -92,7 +99,6 @@
 
         #copy-button {
             background-color: #4CAF50;
-            color: white;
         }
 
         #copy-button:hover {
@@ -128,8 +134,10 @@
         <div id="generated-url"></div>
         <input type="text" id="custom-url" placeholder="Customize your URL here" />
 
-        <button class="full-width" onclick="updateURL()">Update URL</button>
-        <button id="copy-button" class="full-width" onclick="copyURL()">Copy URL</button>
+        <div class="button-container">
+            <button id="update-button" class="full-width" onclick="updateURL()">Update URL</button>
+            <button id="copy-button" class="full-width" onclick="copyURL()">Copy URL</button>
+        </div>
         <div id="copy-message">URL copied to clipboard!</div>
     </div>
 
@@ -207,4 +215,3 @@
 </body>
 
 </html>
-
