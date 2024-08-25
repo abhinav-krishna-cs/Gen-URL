@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gen-URL: SEO-Friendly URL Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #generated-url {
+            font-weight: bold;
+            color: #5cb85c;
+            margin-top: 10px;
+            word-wrap: break-word;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .option-box {
+            background-color: white;
+            color: #007bff;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .option-box.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .full-width {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        #generate-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+        }
+
+        #generate-button:active {
+            background-color: #45a049;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) inset;
+            transform: scale(0.98);
+        }
+
+        #copy-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #copy-button:hover {
+            background-color: #45a049;
+        }
+
+        #copy-message {
+            margin-top: 10px;
+            color: #5cb85c;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Gen-URL: SEO-Friendly URL Generator</h1>
+        <input type="text" id="input-text" placeholder="Enter your text or title here" />
+
+        <div class="options">
+            <div class="option-box" id="separator-hyphen" onclick="selectOption('separator', '-')">Separate with -</div>
+            <div class="option-box" id="separator-underscore" onclick="selectOption('separator', '_')">Separate with _</div>
+            <div class="option-box" id="remove-stopwords" onclick="toggleOption('stopwords')">Remove Stop Words</div>
+            <div class="option-box" id="remove-numbers" onclick="toggleOption('numbers')">Remove Numbers</div>
+        </div>
+
+        <button id="generate-button" class="full-width" onclick="generateURL()">Generate URL</button>
+
+        <h3>Generated URL:</h3>
+        <div id="generated-url"></div>
+        <input type="text" id="custom-url" placeholder="Customize your URL here" />
+
+        <button class="full-width" onclick="updateURL()">Update URL</button>
+        <button id="copy-button" class="full-width" onclick="copyURL()">Copy URL</button>
+        <div id="copy-message">URL copied to clipboard!</div>
+    </div>
+
+    <script>
+        let separator = '-';
+        let removeStopWords = false;
+        let removeNumbers = false;
+
+        const stopWords = ["a", "an", "and", "the", "or", "but", "on", "in", "with", "for", "to", "of", "by", "at", "is", "it", "as", "from", "that", "this"];
+
+        function selectOption(optionType, value) {
+            if (optionType === 'separator') {
+                separator = value;
+                document.getElementById('separator-hyphen').classList.remove('active');
+                document.getElementById('separator-underscore').classList.remove('active');
+
+                if (value === '-') {
+                    document.getElementById('separator-hyphen').classList.add('active');
+                } else {
+                    document.getElementById('separator-underscore').classList.add('active');
+                }
+            }
+        }
+
+        function toggleOption(option) {
+            if (option === 'stopwords') {
+                removeStopWords = !removeStopWords;
+                document.getElementById('remove-stopwords').classList.toggle('active');
+            } else if (option === 'numbers') {
+                removeNumbers = !removeNumbers;
+                document.getElementById('remove-numbers').classList.toggle('active');
+            }
+        }
+
+        function generateURL() {
+            let inputText = document.getElementById('input-text').value;
+
+            if (removeNumbers) {
+                inputText = inputText.replace(/[0-9]/g, '');
+            }
+
+            if (removeStopWords) {
+                inputText = inputText.split(' ').filter(word => !stopWords.includes(word.toLowerCase())).join(' ');
+            }
+
+            let generatedURL = inputText.toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric characters
+                .replace(/\s+/g, separator) // Replace spaces with the selected separator
+                .replace(new RegExp(separator + '+', 'g'), separator); // Replace multiple separators with a single separator
+
+            document.getElementById('generated-url').textContent = generatedURL;
+            document.getElementById('custom-url').value = generatedURL;
+            document.getElementById('copy-message').style.display = 'none';
+        }
+
+        function updateURL() {
+            let customURL = document.getElementById('custom-url').value;
+            document.getElementById('generated-url').textContent = customURL;
+            document.getElementById('copy-message').style.display = 'none';
+        }
+
+        function copyURL() {
+            let copyText = document.getElementById('generated-url').textContent;
+            navigator.clipboard.writeText(copyText).then(() => {
+                document.getElementById('copy-message').style.display = 'block';
+            }, () => {
+                alert('Failed to copy URL.');
+            });
+        }
+
+        // Set initial active state for separator options
+        document.getElementById('separator-hyphen').classList.add('active');
+    </script>
+</body>
+
+</html>
